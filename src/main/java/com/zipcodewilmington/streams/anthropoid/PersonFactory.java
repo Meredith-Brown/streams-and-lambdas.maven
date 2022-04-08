@@ -6,6 +6,7 @@ import com.zipcodewilmington.streams.tools.StringUtils;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -39,7 +40,7 @@ public final class PersonFactory {
      *
      * @param listSize - number of Person objects to create
      * @return - ArrayList of Person objects
-     */ // TODO
+     */
     public List<Person> createPersonList(int listSize) {
         List<Person> output = new ArrayList<>(listSize);
         IntStream.range(0, listSize).forEach(index -> {
@@ -52,19 +53,21 @@ public final class PersonFactory {
     /**
      * @param arrayLength - number of Person objects to create
      * @return - Array of Person objects
-     */ // TODO
+     */ // https://stackoverflow.com/questions/25077203/java-8-fill-array-with-supplier
     public Person[] createPersonArray(int arrayLength) {
-        return null;
+        Supplier<Person> supplier = () -> createRandomPerson();
+        Person[] output = Stream.generate(supplier).limit(arrayLength).toArray(Person[]::new);
+        return output;
     }
-
 
     /**
      * Section 8.2
      *
      * @param streamCount - number of Person objects to create
      * @return - Stream representation of collection of Person objects
-     */ // TODO
+     */
     public Stream<Person> createPersonStream(int streamCount) {
-        return null;
+        List<Person> personStreamSource = createPersonList(streamCount);
+        return personStreamSource.stream();
     }
 }
