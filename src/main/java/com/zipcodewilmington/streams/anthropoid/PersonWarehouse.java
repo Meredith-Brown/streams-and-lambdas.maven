@@ -4,10 +4,7 @@ import com.zipcodewilmington.streams.tools.ReflectionUtils;
 import com.zipcodewilmington.streams.tools.logging.LoggerHandler;
 import com.zipcodewilmington.streams.tools.logging.LoggerWarehouse;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -51,11 +48,12 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return list of uniquely named Person objects
      */
     public Stream<Person> getUniquelyNamedPeople() {
-        List<String> nameList = getNames();
+        List<String> nameList = new ArrayList<>();
         List<Person> output = new ArrayList<>();
         IntStream.range(0, people.size()).forEach(index -> {
             if (!nameList.contains(people.get(index).getName())) {
                 output.add(people.get(index));
+                nameList.add(people.get(index).getName());
             }
         });
         return output.stream();
@@ -81,11 +79,12 @@ public final class PersonWarehouse implements Iterable<Person> {
      * @return a Stream of respective
      */
     public Stream<Person> getFirstNUniquelyNamedPeople(int n) {
-        List<String> nameList = getNames();
+        List<String> nameList = new ArrayList<>();
         List<Person> output = new ArrayList<>();
         IntStream.range(0, people.size()).forEach(index -> {
-            if (!nameList.contains(people.get(index).getName()) && output.size() <= n) {
+            if (!nameList.contains(people.get(index).getName()) && output.size() < n) {
                 output.add(people.get(index));
+                nameList.add(people.get(index).getName());
             }
         });
         return output.stream();
@@ -93,25 +92,44 @@ public final class PersonWarehouse implements Iterable<Person> {
 
     /**
      * @return a mapping of Person Id to the respective Person name
-     */ // TODO
+     */
     public Map<Long, String> getIdToNameMap() {
-        return null;
+        Map<Long, String> output = new HashMap<>();
+        IntStream.range(0, people.size()).forEach(index -> {
+            output.put(people.get(index).getPersonalId(), people.get(index).getName());
+        });
+        return output;
     }
 
 
     /**
      * @return Stream of Stream of Aliases
-     */ // TODO
+     */
     public Stream<Stream<String>> getNestedAliases() {
-        return null;
+        List<String> subOutput = new ArrayList<>();
+        List<Stream<String>> output = new ArrayList<>();
+        IntStream.range(0, people.size()).forEach(index -> {
+            String[] aliases = people.get(index).getAliases();
+            IntStream.range(0, aliases.length).forEach(index2 -> {
+                subOutput.add(aliases[index2]);
+                output.add(subOutput.stream());
+            });
+        });
+        return output.stream();
     }
-
 
     /**
      * @return Stream of all Aliases
-     */ // TODO
+     */
     public Stream<String> getAllAliases() {
-        return null;
+        List<String> output = new ArrayList<>();
+        IntStream.range(0, people.size()).forEach(index -> {
+            String[] aliases = people.get(index).getAliases();
+            IntStream.range(0, aliases.length).forEach(index2 -> {
+                output.add(aliases[index2]);
+            });
+        });
+        return output.stream();
     }
 
     // DO NOT MODIFY
